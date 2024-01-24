@@ -5,40 +5,46 @@ export type Config = {
 };
 
 export type Listner = () => void;
-export type Box = unknown;
 
-export type GetState<T> = () => T;
-type CB<T> = (box: T) => T;
+export type Getter<T> = () => T;
 
-export type Setter<T> = (cb: CB<T>) => void;
+export type Setter<T> = (cb: (prevState: T) => T) => void;
 
 export type Subscribe = (listener: Listner) => () => void;
 
-type CreateStoreRes<T> = {
+export type UseStore = <T>(
+  subscribe: Subscribe,
+  getState: Getter<T>,
+  setter: Setter<T>,
+  config: Config,
+  selector: (state: T) => any
+) => T;
+
+export type Box<T, K> = {
+  name: string;
+  initialState: T;
+  actions: (setter: Setter<T>, getter: Getter<T>) => K;
+};
+
+export type SetupBoxState = <T, K>(
+  box: Box<T, K>,
+  config: Config
+) => {
   subscribe: Subscribe;
-  getState: GetState<T>;
+  getter: Getter<T>;
   setter: Setter<T>;
 };
 
-export type CreateState<T> = (
-  setter: Setter<T>,
-  getter: GetState<T>
-) => unknown;
+export type UseSelector<T> = {
+  <Selector extends (state: T) => any>(
+    selector?: Selector
+  ): ReturnType<Selector> extends T ? ReturnType<Selector> : T;
+};
 
-export type CreateStore = <T>(
-  config: Config,
-  createState: CreateState<T>
-) => CreateStoreRes<T>;
-
-export type CreateCarton = <T>(
-  config: Config,
-  createState: CreateState<T>
-) => T;
-
-export type UseStore<T> = (
-  subscribe: Subscribe,
-  getState: GetState<T>,
-  setter: Setter<T>,
-  config: Config,
-  selector: (state: T) => T
-) => T;
+export type CreateCarton = <T, K>(
+  box: Box<T, K>,
+  config: Config
+) => {
+  useSelector: UseSelector<T>;
+  useDispatcher: () => K;
+};
