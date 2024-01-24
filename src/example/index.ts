@@ -1,9 +1,16 @@
-import { createCloud } from "@/bucket";
+import { createCarton } from "@/bucket";
 
-export const useStore = createCloud((set) => ({
+const createState = (set) => ({
   bears: 0,
   increasePopulation: (add) => set((state) => ({ bears: state.bears + add })),
   removeAllBears: () => set({ bears: 0 }),
-}));
-
-console.log(useStore);
+});
+type State = {
+  bears: number;
+  increasePopulation: () => void;
+  removeAllBears: () => void;
+};
+export const useStore = createCarton<State>(
+  { name: "Test", persist: true, secure: false },
+  createState
+);

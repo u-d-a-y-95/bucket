@@ -1,33 +1,44 @@
-import { useSyncExternalStore } from "react";
+import {
+  Box,
+  CreateCarton,
+  CreateStore,
+  GetState,
+  Listner,
+  Setter,
+  Subscribe,
+} from "./index.type";
+import { useStore } from "./state";
+import { push } from "./storage";
 
-const createStore = (createState) => {
-  const listeners = new Set();
-  let state;
+const createStore: CreateStore = (config, createState) => {
+  const listeners: Set<Listner> = new Set();
+  let box: Box;
 
-  const setState = (cb) => {
-    state = Object.assign({}, state, cb(state));
+  const setter: Setter = (cb) => {
+    box = Object.assign({}, box, cb(box));
+    if (config.persist) {
+      push(config, box);
+    }
     listeners.forEach((listener) => listener());
   };
 
-  const getState = () => state;
+  const getState: GetState = () => box;
 
-  const subscribe = (listener) => {
+  const subscribe: Subscribe = (listener) => {
     listeners.add(listener);
     return () => listeners.delete(listener);
   };
 
-  state = createState(setState, getState);
-  const getInitialState = () => state;
-  return { subscribe, getState, getInitialState };
+  box = createState(setter, getState);
+
+  return { subscribe, getState, setter, box };
 };
 
-export function useStore(subscribe, getState, getInitialState) {
-  const slice = useSyncExternalStore(subscribe, getState, getInitialState);
-  return slice;
-}
+export const createCarton: CreateCarton = (config, createState) => {
+  const { subscribe, getState, setter, box } = createStore(config, createState);
+  console.log(box);
+  const useSelector = (selector = (state) => state) =>
+    useStore(subscribe, getState, setter, config, selector);
 
-export const createCloud = (config) => {
-  const { subscribe, getState, getInitialState } = createStore(config);
-  const useBoundStore = () => useStore(subscribe, getState, getInitialState);
-  return useBoundStore;
+  return useSelector;
 };
