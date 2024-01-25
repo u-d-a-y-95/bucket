@@ -1,11 +1,11 @@
 import { useSelector } from ".";
 
 export const Card = () => {
-  const { select } = useSelector((state) => state.cart);
+  const { room } = useSelector((state) => state);
   return (
     <div>
       new card
-      <div>Room: {select}</div>
+      <div>Room: {room}</div>
     </div>
   );
 };

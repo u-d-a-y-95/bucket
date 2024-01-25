@@ -17,7 +17,7 @@ export type UseStore = <T>(
   getState: Getter<T>,
   setter: Setter<T>,
   config: Config,
-  selector: (state: T) => any
+  selector: (state: T) => T
 ) => T;
 
 export type Box<T, K> = {
@@ -36,9 +36,10 @@ export type SetupBoxState = <T, K>(
 };
 
 export type UseSelector<T> = {
-  <Selector extends (state: T) => any>(
-    selector?: Selector
-  ): ReturnType<Selector> extends T ? ReturnType<Selector> : T;
+  <Selector extends (state: T) => unknown>(
+    selector: Selector
+  ): Selector extends (state: T) => infer R ? R : ReturnType<Selector>;
+  (): T;
 };
 
 export type CreateCarton = <T, K>(
