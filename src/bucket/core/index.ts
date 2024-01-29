@@ -1,29 +1,17 @@
-import {
-  Box,
-  CreateCarton,
-  SetupBoxState,
-  Listner,
-  Setter,
-  Subscribe,
-  Config,
-} from "./index.type";
 import { push } from "./storage";
 import { useStore } from "./store";
 
-const setupBoxState: SetupBoxState = <T, K>(
-  boxes: Box<T, K>[],
-  config: Config
-) => {
-  const listeners: Set<Listner> = new Set();
-  let state: object = {};
+const setupBoxState = (boxes, config) => {
+  const listeners = new Set();
+  let state = {};
   boxes.forEach((box) => {
     state[box.name] = box.initialState;
   });
-  const subscribe: Subscribe = (listener) => {
+  const subscribe = (listener) => {
     listeners.add(listener);
     return () => listeners.delete(listener);
   };
-  const setter: Setter<T> = (key, cb) => {
+  const setter = (key, cb) => {
     console.log(key, cb);
     state = Object.assign({}, state, { [key]: cb(state[key]) });
     if (config.persist) {
@@ -34,7 +22,7 @@ const setupBoxState: SetupBoxState = <T, K>(
   };
 
   const getter = () => state;
-  const actions: object = {};
+  const actions = {};
   boxes.forEach((box) => {
     actions[box.name] = box.actions(setter.bind(null, box.name), getter);
   });
@@ -42,10 +30,7 @@ const setupBoxState: SetupBoxState = <T, K>(
 };
 
 // @ts-ignore
-export const createCarton: CreateCarton = <T, K>(
-  boxes: Box<T, K>[],
-  config: Config
-) => {
+export const createCarton = (boxes, config) => {
   const { subscribe, getter, setter, actions } = setupBoxState(boxes, config);
   // @ts-ignore
   const useSelector = (selector) =>
