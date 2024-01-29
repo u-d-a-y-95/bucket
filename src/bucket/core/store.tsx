@@ -9,11 +9,11 @@ export const useStore: UseStore = <T, Selector extends (state: T) => any>(
   config: Config,
   selector: Selector
 ) => {
-  useEffect(() => {
-    if (config.persist) {
-      setter(() => pull<T>(config, getter()));
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (config.persist) {
+  //     setter(() => pull<T>(config, getter()));
+  //   }
+  // }, []);
   const slice = useSyncExternalStore(subscribe, getter, getter);
   return selector ? selector(slice) : slice;
 };

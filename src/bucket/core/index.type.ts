@@ -27,7 +27,7 @@ export type Box<T, K> = {
 };
 
 export type SetupBoxState = <T, K>(
-  box: Box<T, K>,
+  boxes: Box<T, K>[],
   config: Config
 ) => {
   subscribe: Subscribe;
@@ -43,7 +43,7 @@ export type UseSelector<T> = {
 };
 
 export type CreateCarton = <T, K>(
-  box: Box<T, K>,
+  box: Box<T, K>[],
   config: Config
 ) => {
   useSelector: UseSelector<T>;

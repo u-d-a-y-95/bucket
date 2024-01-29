@@ -3,37 +3,54 @@ import { Box, Config, Getter, Setter } from "@/bucket/core/index.type";
 
 type Init = {
   room: number;
+};
+type Init2 = {
   bar: number;
-  cart: {
-    select: number;
-  };
 };
 
 type Action = {
-  addRoom: () => void;
-  removeRoom: () => void;
+  add: () => void;
+  remove: () => void;
 };
 
-const box: Box<Init, Action> = {
+const box1: Box<Init, Action> = {
   name: "hotel",
   initialState: {
     room: 0,
-    bar: 0,
-    cart: {
-      select: 0,
-    },
   },
   actions: (setter, getter) => {
     return {
-      addRoom: () => {
+      add: () => {
         setter((state) => {
-          state.cart.select += 1;
+          state.room += 1;
           return state;
         });
       },
-      removeRoom: () => {
+      remove: () => {
         setter((state) => {
           state.room -= 1;
+          return state;
+        });
+      },
+    };
+  },
+};
+const box2: Box<Init2, Action> = {
+  name: "resturant",
+  initialState: {
+    bar: 0,
+  },
+  actions: (setter, getter) => {
+    return {
+      add: () => {
+        setter((state) => {
+          state.bar += 1;
+          return state;
+        });
+      },
+      remove: () => {
+        setter((state) => {
+          state.bar -= 1;
           return state;
         });
       },
@@ -43,7 +60,10 @@ const box: Box<Init, Action> = {
 
 const config: Config = {
   name: "Test",
-  persist: true,
+  persist: false,
   secure: false,
 };
-export const { useDispatcher, useSelector } = createCarton(box, config);
+export const { useDispatcher, useSelector } = createCarton(
+  [box1, box2],
+  config
+);

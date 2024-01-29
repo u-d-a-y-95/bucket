@@ -1,11 +1,18 @@
 import { useSelector } from ".";
 
+const Dummy = () => {
+  return <div>Dummy</div>;
+};
+
 export const Card = () => {
-  const { room } = useSelector((state) => state);
+  const {
+    hotel: { room },
+  } = useSelector((state) => state);
   return (
     <div>
       new card
       <div>Room: {room}</div>
+      <Dummy />
     </div>
   );
 };
