@@ -1,9 +1,7 @@
 import { useSelector } from ".";
 
 export const Bar = () => {
-  const {
-    resturant: { bar },
-  } = useSelector();
+  const { bar } = useSelector((state) => state.resturant);
   return (
     <div>
       <div>Bar: {bar}</div>

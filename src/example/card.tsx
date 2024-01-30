@@ -7,7 +7,7 @@ const Dummy = () => {
 export const Card = () => {
   const {
     hotel: { room },
-  } = useSelector((state) => state);
+  } = useSelector();
   return (
     <div>
       new card

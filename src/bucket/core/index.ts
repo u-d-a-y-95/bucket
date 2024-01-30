@@ -12,12 +12,10 @@ const setupBoxState = (boxes, config) => {
     return () => listeners.delete(listener);
   };
   const setter = (key, cb) => {
-    console.log(key, cb);
-    state = Object.assign({}, state, { [key]: cb(state[key]) });
+    state = Object.assign({}, state, { [key]: { ...cb(state[key]) } });
     if (config.persist) {
       push(config, state);
     }
-    console.log(state);
     listeners.forEach((listener) => listener());
   };
 
@@ -33,7 +31,7 @@ const setupBoxState = (boxes, config) => {
 export const createCarton = (boxes, config) => {
   const { subscribe, getter, setter, actions } = setupBoxState(boxes, config);
   // @ts-ignore
-  const useSelector = (selector) =>
+  const useSelector = (selector = (state) => state) =>
     useStore(subscribe, getter, setter, config, selector);
   const useDispatcher = () => actions;
   return { useDispatcher, useSelector };
